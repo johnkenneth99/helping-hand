@@ -1,5 +1,9 @@
+# Ignore folders
 node_modules
 out
 
+# Ignore .env
 .env
 
+# Ignore files
+index.js
