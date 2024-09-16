@@ -1,35 +1,34 @@
 import { stdin, stdout } from "process";
+
 import { createInterface } from "readline";
 import { exec } from "child_process";
+import { reviewRequest } from "./reviewRequest.js";
 
 const readlineInstance = createInterface({ input: stdin, output: stdout });
 
-readlineInstance.on("line", (input) => {
-  const command = buildCommand(input);
+type CallBack = (...args: any[]) => void;
 
-  exec(command, { cwd: process.cwd() }, (error, stdout, stderror) => {
-    if (error) {
-      throw new Error(stderror);
-    }
-    // TODO: Add config.json file for default formats of action results.
-    console.log(`@Reviewer, please check ${stdout} for review.`);
-  });
+// TODO: Slowly build out the documentation.
+readlineInstance.on("line", (input) => {
+  const [command, callback] = buildCommand(input);
+
+  if (callback) {
+    exec(command, callback);
+  }
 
   readlineInstance.close();
 });
 
-// TODO: Extract to another module.
-const buildCommand = (input: string): string => {
+// TODO: Add feature for daily report and creating .prettierrc file based on your vscode prettier config.
+const buildCommand = (input: string): [string, CallBack | null] => {
   const [action, args] = input.split(" ");
-  let command = "";
-  // TODO: Add branch names as args in review action. Current branch will be used if omitted.
+
   if (action === "mr") {
-    command = "git rev-parse --short";
+    const branch = !args ? "head" : args;
+    const command = `git rev-parse --short ${branch}`;
 
-    const branchName = !args ? "head" : args;
-
-    command += branchName;
+    return [command, reviewRequest];
   }
 
-  return command;
+  return ["", null];
 };
