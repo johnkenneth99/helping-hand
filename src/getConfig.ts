@@ -3,7 +3,7 @@ import { homedir } from "os";
 import type { RemoveProps } from "../utils/types.js";
 
 type ConfigProps = {
-  reviewFormat?: string;
+  reviewFormat?: any;
   isBool?: boolean;
 };
 

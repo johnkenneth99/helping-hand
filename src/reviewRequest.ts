@@ -13,10 +13,16 @@ export const reviewRequest = (error: ExecException | null, stdout: string, stder
     throw new Error(errorMessage);
   }
 
-  // TODO: Check if provided format is valid.
-  if (values?.reviewFormat) {
+  if (values === null || values?.reviewFormat == undefined) {
+    console.log(`Please check ${stdout} for review.`);
+  } else if (isProvidedFormatValid(values.reviewFormat)) {
     console.log(values.reviewFormat.replace("<hash>", stdout));
   } else {
-    console.log(`@Reviewer, please check ${stdout} for review.`);
+    // TODO: Create specific error for if format is not a string and if <hash> is missing in format.
+    console.error("Invalid format is provided in config.");
   }
+};
+
+const isProvidedFormatValid = (format: any): format is string => {
+  return typeof format === "string" && format.includes("<hash>");
 };
