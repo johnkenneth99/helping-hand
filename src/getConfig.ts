@@ -4,7 +4,7 @@ import type { RemoveProps } from "../utils/types.js";
 
 type ConfigProps = {
   reviewFormat?: any;
-  isBool?: boolean;
+  count?: boolean;
 };
 
 type ConfigKeys = keyof ConfigProps;
@@ -41,7 +41,7 @@ export const getConfig = (...keys: ConfigKeys[]): Readonly<RemoveProps<ConfigBag
     const config = JSON.parse(data) as ConfigProps;
 
     for (const key of keys) {
-      if (config[key]) {
+      if (Object.hasOwn(config, key)) {
         const currentValues = configBag.values || { [key]: config[key] };
 
         configBag.values = { ...currentValues, [key]: config[key] };
