@@ -1,34 +1,28 @@
-import { stdin, stdout } from "process";
-
-import { createInterface } from "readline";
+import { argv } from "process";
 import { exec } from "child_process";
+import { Command } from "../enums/index.js";
 import { reviewRequest } from "./reviewRequest.js";
 
-const readlineInstance = createInterface({ input: stdin, output: stdout });
-
-type CallBack = (...args: any[]) => void;
-
-// TODO: Slowly build out the documentation.
-readlineInstance.on("line", (input) => {
-  const [command, callback] = buildCommand(input);
-
-  if (callback) {
-    exec(command, callback);
-  }
-
-  readlineInstance.close();
-});
-
 // TODO: Add feature for daily report and creating .prettierrc file based on your vscode prettier config.
-const buildCommand = (input: string): [string, CallBack | null] => {
-  const [action, args] = input.split(" ");
+const main = (args: string[]) => {
+  const [action, ...rest] = args;
 
-  if (action === "mr") {
-    const branch = !args ? "head" : args;
-    const command = `git rev-parse --short ${branch}`;
+  switch (action) {
+    case Command.REVIEW_REQUEST: {
+      const branch = !rest.length ? "head" : rest.at(0);
+      const command = `git rev-parse --short ${branch}`;
 
-    return [command, reviewRequest];
+      exec(command, reviewRequest);
+      break;
+    }
+
+    case Command.DAILY_REPORT: {
+      break;
+    }
+
+    default:
+      console.error("Unknown commmand.");
   }
-
-  return ["", null];
 };
+
+main(argv.slice(2));
