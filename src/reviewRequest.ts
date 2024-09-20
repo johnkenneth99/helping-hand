@@ -2,6 +2,7 @@ import type { ExecException } from "child_process";
 import { getConfig } from "./getConfig.js";
 import { spawn } from "child_process";
 import { isNull } from "../utils/index.js";
+import { exit } from "process";
 
 // TODO: Currently only working on current directory. Should be able to accept path of other repository as argument.
 export const reviewRequest = (error: ExecException | null, hash: string, stderror: string) => {
@@ -23,8 +24,17 @@ export const reviewRequest = (error: ExecException | null, hash: string, stderro
     const format = values.reviewFormat.replace("<hash>", hash);
     copy.stdin.end(format);
   } else {
-    // TODO: Create specific error for if format is not a string and if <hash> is missing in format.
-    console.error("Invalid format is provided in config.");
+    const { reviewFormat } = values;
+
+    if (typeof reviewFormat === "string" && !reviewFormat.includes("<hash>")) {
+      console.error("Keyword '<hash>' is missing from 'reviewFormat'.");
+    } else if (typeof reviewFormat !== "string") {
+      console.error("Value of 'reviewFormat' is not a string.");
+    } else {
+      console.error("Unknown error.");
+    }
+
+    exit();
   }
 };
 
