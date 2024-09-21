@@ -1,6 +1,9 @@
-import { argv } from "process";
 import { exec } from "child_process";
+import { copyFileSync, existsSync } from "fs";
+import { argv } from "process";
+import { CONFIG_FILE_NAME } from "../constants/index.js";
 import { Command } from "../enums/index.js";
+import { getConfigPath } from "../utils/index.js";
 import { reviewRequest } from "./reviewRequest.js";
 
 // TODO: Add feature for daily report and creating .prettierrc file based on your vscode prettier config.
@@ -13,6 +16,17 @@ const main = (args: string[]) => {
       const command = `git rev-parse --short ${branch}`;
 
       exec(command, reviewRequest);
+      break;
+    }
+
+    case Command.INITIALIZE_CONFIG: {
+      const configPath = getConfigPath();
+
+      if (!existsSync(configPath)) {
+        copyFileSync(CONFIG_FILE_NAME, configPath);
+      } else {
+        console.error(`${configPath} already exists.`);
+      }
       break;
     }
 

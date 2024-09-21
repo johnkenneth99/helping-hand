@@ -1,5 +1,5 @@
-import { readFileSync } from "fs";
-import { homedir } from "os";
+import { existsSync, readFileSync } from "fs";
+import { getConfigPath } from "../utils/index.js";
 import type { RemoveProps } from "../utils/types.js";
 
 type ConfigProps = {
@@ -27,15 +27,15 @@ class ConfigBag {
 }
 
 export const getConfig = (...keys: ConfigKeys[]): Readonly<RemoveProps<ConfigBag, "setError">> => {
-  const configPath = homedir().concat("\\helping-hand.json");
+  const configPath = getConfigPath();
 
   const configBag = new ConfigBag();
 
-  const data = readFileSync(configPath, { encoding: "utf-8" });
-
-  if (!data) {
+  if (!existsSync(configPath)) {
     return configBag;
   }
+
+  const data = readFileSync(configPath, { encoding: "utf-8" });
 
   try {
     const config = JSON.parse(data) as ConfigProps;

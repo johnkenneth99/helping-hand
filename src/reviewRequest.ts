@@ -1,8 +1,8 @@
 import type { ExecException } from "child_process";
-import { getConfig } from "./getConfig.js";
 import { spawn } from "child_process";
-import { isNull } from "../utils/index.js";
 import { exit } from "process";
+import { isNull } from "../utils/index.js";
+import { getConfig } from "./getConfig.js";
 
 // TODO: Currently only working on current directory. Should be able to accept path of other repository as argument.
 export const reviewRequest = (error: ExecException | null, hash: string, stderror: string) => {
