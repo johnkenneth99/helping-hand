@@ -17,11 +17,12 @@ export const reviewRequest = (error: ExecException | null, hash: string, stderro
   }
 
   const copy = spawn("clip");
+  const trimmedHash = hash.trim();
 
   if (isNull(values) || !Object.hasOwn(values, "reviewFormat")) {
-    copy.stdin.end(`Please check ${hash} for review.`);
+    copy.stdin.end(`Please check ${trimmedHash} for review.`);
   } else if (isProvidedFormatValid(values.reviewFormat)) {
-    const format = values.reviewFormat.replace("<hash>", hash);
+    const format = values.reviewFormat.replace("<hash>", trimmedHash);
     copy.stdin.end(format);
   } else {
     const { reviewFormat } = values;
