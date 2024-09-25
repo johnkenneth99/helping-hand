@@ -31,6 +31,18 @@ const main = (args: string[]) => {
     }
 
     case Command.DAILY_REPORT: {
+      const todayUTCMilliseconds = new Date().getTime();
+      const offsetMilliseconds = new Date().getTimezoneOffset() * 60 * 1000;
+
+      const todayLocale = new Date(todayUTCMilliseconds - offsetMilliseconds);
+
+      todayLocale.setUTCHours(0, 0, 0, 0);
+
+      const command = `git log --since=${todayLocale.toISOString().substring(0, 19)}`;
+
+      exec(command, (_, stdout, __) => {
+        console.log(stdout);
+      });
       break;
     }
 
