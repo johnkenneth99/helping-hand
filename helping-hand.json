@@ -1,3 +1,8 @@
 {
-    "reviewFormat": "Please check <hash> for review." 
+    "reviewFormat": "Please check <hash> for review." ,
+    "dailyReportConfig": {
+        "subjectPrefix": "refs#",
+        "tags": ["@channel"],
+        "footer": "Otsukaresamadesu :man-bowing:"
+    }
 }
