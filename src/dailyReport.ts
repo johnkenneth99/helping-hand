@@ -1,4 +1,5 @@
-import { ExecException, spawn } from "child_process";
+import { ExecException } from "child_process";
+import { copyToClipboard } from "../utils/node.js";
 
 export const dailyReport = (error: ExecException | null, commits: string, errorMessage: string) => {
   if (error) {
@@ -25,6 +26,5 @@ export const dailyReport = (error: ExecException | null, commits: string, errorM
 
   const report = [tag, formattedCommits, footer].join("\n");
 
-  const copy = spawn("clip");
-  copy.stdin.end(report);
+  copyToClipboard(report);
 };
