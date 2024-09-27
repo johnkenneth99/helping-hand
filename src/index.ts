@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { copyFileSync, existsSync } from "fs";
 import { argv } from "process";
 import { CONFIG_FILE_NAME } from "../constants/index.js";
@@ -38,11 +38,39 @@ const main = (args: string[]) => {
 
       todayLocale.setUTCHours(0, 0, 0, 0);
 
-      const command = `git log --since=${todayLocale.toISOString().substring(0, 19)}`;
+      const command = `git log --since=${todayLocale.toISOString().substring(0, 19)} --format=%s%n%b`;
 
-      exec(command, (_, stdout, __) => {
-        console.log(stdout);
+      // TODO: Extract to another module
+
+      // TODO: Add these to config file
+      const subjectPrefix = "refs#";
+      const tag = "@channel";
+      const footer = "Otsukaresamadesu :man-bowing:";
+
+      exec(command, (error, commits, errorMessage) => {
+        if (error) {
+          throw new Error(errorMessage);
+        }
+
+        const formattedCommits = commits
+          .split("\n")
+          .map((str) => {
+            if (str.includes(subjectPrefix)) {
+              return `- ${str.substring(subjectPrefix.length)}`;
+            } else if (str) {
+              return ` - ${str}`;
+            }
+            return str;
+          })
+          .filter((str) => str)
+          .join("\n");
+
+        const report = [tag, formattedCommits, footer].join("\n");
+
+        const copy = spawn("clip");
+        copy.stdin.end(report);
       });
+
       break;
     }
 
