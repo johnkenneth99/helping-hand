@@ -1,15 +1,10 @@
 import { existsSync, readFileSync } from "fs";
 import { getConfigPath } from "../utils/index.js";
 import { exit } from "process";
+import { configSchema } from "./schemas/config.js";
+import { z } from "zod";
 
-type ConfigProps = {
-    reviewFormat: string;
-    dailyReportConfig: {
-        tags: string[];
-        footer: string;
-        subjectPrefix: string;
-    };
-};
+type ConfigProps = z.infer<typeof configSchema>;
 
 type ConfigKeys = keyof ConfigProps;
 
@@ -22,7 +17,21 @@ export const getConfig = <T extends ConfigKeys>(key: T): ConfigProps[T] => {
     }
     const data = readFileSync(configPath, { encoding: "utf-8" });
 
-    const config = JSON.parse(data) as ConfigProps;
+    const config = JSON.parse(data) as unknown;
 
-    return config[key];
+    if (isConfig(config)) {
+        return config[key];
+    } else {
+        exit(1);
+    }
+};
+
+const isConfig = (config: unknown): config is ConfigProps => {
+    const { success, error } = configSchema.safeParse(config);
+
+    if (!success) {
+        console.error(error.message);
+    }
+
+    return success;
 };
