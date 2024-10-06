@@ -39,7 +39,7 @@ const main = (args: string[]) => {
 
             todayLocale.setUTCHours(0, 0, 0, 0);
 
-            const command = `git log --since=${todayLocale.toISOString().substring(0, 19)} --format=%s%n%b`;
+            const command = `git log --no-merges --since=${todayLocale.toISOString().substring(0, 19)} --format=%s%n%b`;
 
             exec(command, dailyReport);
             break;
