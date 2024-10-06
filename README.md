@@ -57,11 +57,15 @@ Make sure you have <a href="https://nodejs.org/en"><strong>node</strong></a> ins
    ```sh
    npm install
    ```
-3. Install the tool globally on your machine
+3. Compile
+   ```sh
+   npm run tsc
+   ```
+4. Install the tool globally on your machine
    ```sh
    npm install -g
    ```
-4. Initialize default config
+5. Initialize default config
    ```sh
    hand init
    ```
