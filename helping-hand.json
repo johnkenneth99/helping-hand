@@ -4,5 +4,11 @@
         "subjectPrefix": "refs#",
         "tags": ["@channel"],
         "footer": "Otsukaresamadesu :man-bowing:"
+    },
+    "forks": {
+        "saas": {
+            "members": [],
+            "rootDirectory": "default"
+        }
     }
 }

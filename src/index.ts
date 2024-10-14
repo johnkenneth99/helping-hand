@@ -1,14 +1,17 @@
 #!/usr/bin/env node
+
+import "./env.js";
 import { exec } from "child_process";
 import { copyFileSync, existsSync } from "fs";
 import { argv } from "process";
 import { CONFIG_FILE_NAME } from "../constants/index.js";
-import { Command } from "../enums/index.js";
+import { Command, Projects } from "../enums/index.js";
 import { getConfigPath } from "../utils/index.js";
 import { dailyReport } from "./dailyReport.js";
 import { reviewRequest } from "./reviewRequest.js";
+import { cloneSaasForks } from "./cloneSaasForks.js";
 
-const main = (args: string[]) => {
+const main = async (args: string[]): Promise<void> => {
     const [action, ...rest] = args;
 
     switch (action) {
@@ -42,6 +45,19 @@ const main = (args: string[]) => {
             const command = `git log --no-merges --since=${todayLocale.toISOString().substring(0, 19)} --format=%s%n%b`;
 
             exec(command, dailyReport);
+            break;
+        }
+
+        case Command.FORKS: {
+            const [project] = rest;
+
+            switch (project) {
+                case Projects.HIRE_SERVICES_ONLINE: {
+                    cloneSaasForks();
+                    break;
+                }
+            }
+
             break;
         }
 
