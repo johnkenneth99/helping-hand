@@ -2,14 +2,20 @@ import { Octokit } from "@octokit/core";
 import { execSync } from "child_process";
 import { existsSync } from "fs";
 import { homedir } from "os";
+import { z } from "zod";
+import { saasConfigSchema } from "./schemas/config.js";
+import { Options } from "../enums/index.js";
+import { userSchema } from "./schemas/octokit.js";
 
-export const cloneSaasForks = async (): Promise<void> => {
+export const cloneSaasForks = async (options: Options[], config: z.infer<typeof saasConfigSchema>): Promise<void> => {
+    const { targetMembers, cloneDirectory } = config;
+
     const octokit = new Octokit({
         auth: process.env.PAT,
     });
 
     try {
-        const { data } = await octokit.request(process.env.HIRE_SERVICES_ONLINE_GET_FORK_END_POINT, {
+        const response = await octokit.request(process.env.HIRE_SERVICES_ONLINE_GET_FORK_END_POINT, {
             owner: process.env.OWNER,
             repo: process.env.HIRE_SERVICES_ONLINE_REPO,
             accept: "application/vnd.github+json",
@@ -18,13 +24,20 @@ export const cloneSaasForks = async (): Promise<void> => {
             },
         });
 
+        const data = response.data as z.infer<typeof userSchema>[];
+
         const rootRepoPath = homedir().concat(`\\${process.env.HIRE_SERVICES_ONLINE_REPO}`);
 
         if (!existsSync(rootRepoPath)) {
             execSync(`mkdir ${process.env.HIRE_SERVICES_ONLINE_REPO}`, { cwd: homedir() });
         }
 
-        for (const user of data) {
+        const userList = options.includes(Options.TARGET) ? data.filter((user) => targetMembers.includes(user.owner.login)) : data;
+
+        if (cloneDirectory) {
+        }
+
+        for (const user of userList) {
             const {
                 owner: { login },
                 clone_url,

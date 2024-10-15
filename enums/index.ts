@@ -8,3 +8,10 @@ export enum Command {
 export enum Projects {
     HIRE_SERVICES_ONLINE = "saas",
 }
+
+export enum Options {
+    GET = "--get",
+    SET = "--set",
+    TARGET = "--target",
+    DELETE = "--delete",
+}

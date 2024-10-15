@@ -7,8 +7,8 @@
     },
     "forks": {
         "saas": {
-            "members": [],
-            "rootDirectory": "default"
+            "targetMembers": [],
+            "cloneDirectory": "default"
         }
     }
 }

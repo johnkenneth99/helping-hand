@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import "./env.js";
 import { exec } from "child_process";
 import { copyFileSync, existsSync } from "fs";
 import { argv } from "process";
@@ -8,10 +7,11 @@ import { CONFIG_FILE_NAME } from "../constants/index.js";
 import { Command, Projects } from "../enums/index.js";
 import { getConfigPath } from "../utils/index.js";
 import { dailyReport } from "./dailyReport.js";
+import "./env.js";
+import { handleSaasOptions } from "./handleSaasOptions.js";
 import { reviewRequest } from "./reviewRequest.js";
-import { cloneSaasForks } from "./cloneSaasForks.js";
 
-const main = async (args: string[]): Promise<void> => {
+const main = (args: string[]): void => {
     const [action, ...rest] = args;
 
     switch (action) {
@@ -49,20 +49,23 @@ const main = async (args: string[]): Promise<void> => {
         }
 
         case Command.FORKS: {
-            const [project] = rest;
+            const [project, ...options] = rest;
 
             switch (project) {
                 case Projects.HIRE_SERVICES_ONLINE: {
-                    cloneSaasForks();
+                    handleSaasOptions(options);
                     break;
                 }
+
+                default:
+                    console.error(`❌ '${project}' is an unrecognized project.`);
             }
 
             break;
         }
 
         default:
-            console.error("Unknown commmand.");
+            console.error(`❌ '${action}' is an unknown command.`);
     }
 };
 
